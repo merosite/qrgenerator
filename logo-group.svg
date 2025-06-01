@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 320">
+    <!-- Main Logo Group -->
+    <g id="main-logo-group">
+        <!-- Circles -->
+        <circle class="circle outer-circle" cx="160" cy="160" r="150" fill="none" stroke="#1e3c72" stroke-width="3"/>
+        <circle class="circle inner-circle" cx="160" cy="160" r="95" fill="none" stroke="#1e3c72" stroke-width="2"/>
+        
+        <!-- Center Logo Icon - Tree of Knowledge -->
+        <g transform="translate(160, 155) scale(1.5) translate(-24, -24)">
+            <!-- Tree Trunk -->
+            <path d="M22 48V28M26 48V28" fill="none" stroke="#1e3c72" stroke-width="4"/>
+            
+            <!-- Tree Branches and Leaves -->
+            <path d="M24 28c0 0-12-8-12-16s6-12 12-12 12 4 12 12-12 16-12 16z" fill="#1e3c72"/>
+            <path d="M24 24c0 0 8-6 8-12s-4-8-8-8-8 2-8 8 8 12 8 12z" fill="#1e3c72"/>
+            
+            <!-- Book at Base -->
+            <path d="M12 44h24v4H12z" fill="#1e3c72"/>
+            
+            <!-- Small Circles (Knowledge Fruits) -->
+            <circle cx="20" cy="16" r="2" fill="#ffffff"/>
+            <circle cx="28" cy="18" r="2" fill="#ffffff"/>
+            <circle cx="24" cy="12" r="2" fill="#ffffff"/>
+        </g>
+        
+        <!-- Estd Text -->
+        <text x="160" y="233" text-anchor="middle" fill="#1e3c72" style="font-family: 'Poppins', sans-serif; font-size: 14px; font-weight: 600;">Estd: 2025</text>
+        
+        <!-- Add stars between circles -->
+        <polygon id="left-star" points="48,182 51.09,190.18 59.82,190.18 52.36,195.32 55.45,203.5 48,198.36 40.55,203.5 43.64,195.32 36.18,190.18 44.91,190.18" 
+                fill="#1e3c72" stroke="none"/>
+        <polygon id="right-star" points="272,182 275.09,190.18 283.82,190.18 276.36,195.32 279.45,203.5 272,198.36 264.55,203.5 267.64,195.32 260.18,190.18 268.91,190.18" 
+                fill="#1e3c72" stroke="none"/>
+        
+        <!-- Rotatable Text Group -->
+        <g id="rotatable-text">
+            <defs>
+                <path id="curved-circle-path" 
+                    d="M160,40 a120,120 0 1,1 0,240 a120,120 0 1,1 0,-240"
+                    transform="rotate(-90, 160, 160)"/>
+                <path id="curved-circle-path-address" 
+                    d="M25,160 a135,135 0 0,0 270,0"
+                    transform="rotate(180, 160, 160)"/>
+            </defs>
+            <g id="name-text-group" transform="rotate(0, 160, 160)">
+                <text class="circular-text">
+                    <textPath href="#curved-circle-path" startOffset="25%" text-anchor="middle">
+                        SHREE SRIJANA BASIC SCHOOL
+                    </textPath>
+                </text>
+            </g>
+            <g id="address-text-group" transform="rotate(0, 160, 160)">
+                <text class="circular-text address-text" transform="scale(-1, -1) translate(-320, -320)">
+                    <textPath href="#curved-circle-path-address" startOffset="50%" text-anchor="middle">
+                        URLABARI-4, MORANG
+                    </textPath>
+                </text>
+            </g>
+        </g>
+    </g>
+</svg> 

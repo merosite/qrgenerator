@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!-- Screen wake lock meta tag -->
+    <meta name="theme-color" content="#1a73e8">
+    <meta name="wake-lock" content="screen">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icons/icon-192x192.png">
+    <title>QR Code Generator & Scanner - LKCreation</title>
+    <meta name="description" content="Simple and effective QR Code Generator. Create QR codes easily from text or links.">
+    <meta property="og:url" content="https://ambikaadhikari.com.np/">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="QR Code Generator">
+    <meta property="og:description" content="Simple and effective QR Code Generator. Create QR codes easily from text or links.">
+    <meta property="og:image" content="https://ambikaadhikari.com.np/og.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta property="twitter:domain" content="ambikaadhikari.com.np">
+    <meta property="twitter:url" content="https://ambikaadhikari.com.np/">
+    <meta name="twitter:title" content="QR Code Generator">
+    <meta name="twitter:description" content="Simple and effective QR Code Generator. Create QR codes easily from text or links.">
+    <meta name="twitter:image" content="https://ambikaadhikari.com.np/og.png">
+    <link rel="shortcut icon" href="./img/logo.ico" type="image/x-icon">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Ballwictb/font-awesome-sixball-v2@main/six-rp/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"></script>
+    <script type="text/javascript" src="https://unpkg.com/qr-code-styling@1.5.0/lib/qr-code-styling.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap');
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f9fa;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            font-family: 'Poppins', sans-serif;
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .qr-container {
+            text-align: center;
+            padding: 20px;
+            border-radius: 10px;
+            border: 4px solid #dee2e6;
+            min-height: 400px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Android device को लागि विशेष स्टाइल */
+        @media only screen and (max-width: 767px) and (-webkit-min-device-pixel-ratio: 2) {
+            .qr-container {
+                border: none;
+                box-shadow: none;
+                padding: 0;
+            }
+            
+            #canvas {
+                border: none;
+                box-shadow: none;
+                padding: 0;
+            }
+        }
+
+        .btn-action {
+            width: 100%;
+            margin: 10px 0;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .btn-download {
+            background-color: #3498db;
+        }
+
+        .btn-download:hover {
+            background-color: #2980b9;
+        }
+
+        .btn-svg {
+            background-color: #2ecc71;
+        }
+
+        .btn-svg:hover {
+            background-color: #27ae60;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px 0;
+            border-top: 1px solid #dee2e6;
+            color: #2c3e50;
+        }
+
+        .footer-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .footer-brand {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #1a73e8;
+        }
+
+        .footer-contact {
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+
+        .footer-contact a {
+            color: #1a73e8;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-contact a:hover {
+            color: #1557b0;
+            text-decoration: underline;
+        }
+
+        .social-links a {
+            color: #2c3e50;
+            margin: 0 10px;
+            font-size: 24px;
+            text-decoration: none;
+        }
+
+        .form-control-color {
+            width: 45px !important;
+            height: 35px;
+            padding: 2px;
+            border-radius: 8px;
+            border: 2px solid #e9ecef;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .form-control-color:hover {
+            border-color: #1a73e8;
+        }
+
+        .form-control-color:focus {
+            border-color: #1a73e8;
+            box-shadow: 0 0 0 3px rgba(26,115,232,0.2);
+        }
+
+        .color-section {
+            background-color: #ffffff;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .color-presets {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 12px;
+            margin-top: 15px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .form-control-color::-webkit-color-swatch-wrapper {
+            padding: 0;
+        }
+
+        .form-control-color::-webkit-color-swatch {
+            border: none;
+            border-radius: 4px;
+        }
+
+        .color-preset {
+            width: 35px;
+            height: 35px;
+            border-radius: 8px;
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .color-preset:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+
+        .color-preset:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .color-preset:focus {
+            outline: none;
+            border-color: #1a73e8;
+        }
+
+        .corner-preset {
+            background-color: #fff;
+            border: 1px solid #dee2e6;
+            color: #495057;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .corner-preset:hover {
+            background-color: #e9ecef;
+            border-color: #ced4da;
+        }
+
+        .corner-preset.active {
+            background-color: #e9ecef;
+            border-color: #1a73e8;
+            color: #1a73e8;
+        }
+
+        .corner-section {
+            background-color: #f8f9fa;
+        }
+
+        #canvas {
+            margin: 20px 0;
+            padding: 20px;
+            border: 3px solid #dee2e6;
+            border-radius: 10px;
+            background: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .download-options {
+            display: flex;
+            gap: 10px;
+        }
+
+        .download-options button {
+            flex: 1;
+        }
+
+        .form-control {
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 12px;
+            transition: all 0.3s ease;
+            font-size: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+        }
+
+        .form-control:focus {
+            border-color: #1a73e8;
+            box-shadow: 0 0 0 3px rgba(26,115,232,0.2);
+            outline: none;
+        }
+
+        .input-group {
+            box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .input-group-text {
+            background-color: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-right: none;
+            padding: 12px 15px;
+            color: #495057;
+        }
+
+        .input-group .form-control {
+            border-left: none;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .form-select {
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 12px;
+            transition: all 0.3s ease;
+            font-size: 15px;
+            cursor: pointer;
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+        }
+
+        .form-select:focus {
+            border-color: #1a73e8;
+            box-shadow: 0 0 0 3px rgba(26,115,232,0.2);
+            outline: none;
+        }
+
+        .form-range {
+            height: 6px;
+            border-radius: 3px;
+            background-color: #e9ecef;
+        }
+
+        .form-range::-webkit-slider-thumb {
+            background: #1a73e8;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .form-range::-webkit-slider-thumb:hover {
+            transform: scale(1.1);
+        }
+
+        .form-text {
+            color: #6c757d;
+            font-size: 13px;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1><i class="fas fa-qrcode me-2"></i>QR Code Generator</h1>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label for="urlInput" class="form-label"><i class="fas fa-link me-2"></i>URL or Text</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-globe"></i></span>
+                        <input type="text" class="form-control" id="urlInput" placeholder="Enter URL or text" oninput="updateQR()">
+                    </div>
+                </div>
+                <div class="mb-3">
+       
+                    <label for="sizeInput" class="form-label"><i class="fas fa-expand-arrows-alt me-2"></i>Size (pixels)</label>
+                    <div class="d-flex align-items-center gap-2">
+                        <input type="range" class="form-range" id="sizeInput" value="300" min="100" max="400" oninput="updateQR()">
+                        <button class="btn btn-sm btn-secondary" onclick="resetSize()"><i class="fas fa-undo"></i></button>
+                    </div>
+                    <output for="sizeInput" id="sizeOutput">300</output>
+                </div>
+                <div class="mb-4">
+                    <label class="form-label"><i class="fas fa-puzzle-piece me-2"></i>Dots Style</label>
+                    <div class="corner-section p-3 rounded border">
+                        <select class="form-select" onchange="setDotsStyle(this.value)" id="dotsStyleSelect">
+                            <option value="square">Square</option>
+                            <option value="rounded">Rounded</option>
+                            <option value="dots">Dots</option>
+                            <option value="classy">Classy</option>
+                            <option value="classy-rounded">Classy Rounded</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <label class="form-label"><i class="fas fa-puzzle-piece me-2"></i>Corner Styles</label>
+                    <div class="corner-section p-3 rounded border">
+                        <!-- Corner Square Style -->
+                        <div class="mb-3">
+                            <label class="form-label">Corner Square Style</label>
+                            <select class="form-select" onchange="setCornerStyle('square', this.value)" id="cornerSquareSelect">
+                                <option value="none">None</option>
+                                <option value="square">Square</option>
+                                <option value="extra-rounded">Extra Rounded</option>
+                                <option value="dot">Dot</option>
+                            </select>
+                        </div>
+
+                        <!-- Corner Dot Style -->
+                <div class="mb-3">
+                            <label class="form-label">Corner Dot Style</label>
+                            <select class="form-select" onchange="setCornerStyle('dot', this.value)" id="cornerDotSelect">
+                                <option value="none">None</option>
+                                <option value="square">Square</option>
+                                <option value="dot">Dot</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <label class="form-label"><i class="fas fa-palette me-2"></i>Colors</label>
+                    <div class="color-section p-3 rounded border">
+                        <div class="mb-3">
+                            <label for="fgColor" class="form-label d-flex justify-content-between align-items-center">
+                                <span><i class="fas fa-fill-drip me-2"></i>QR Color</span>
+                                <input type="color" class="form-control form-control-color" id="fgColor" value="#000000" oninput="updateQR()">
+                            </label>
+                            <div class="color-presets d-flex gap-2 mt-2">
+                                <button class="btn btn-sm color-preset" style="background-color: #000000" onclick="setColor('fgColor', '#000000')"></button>
+                                <button class="btn btn-sm color-preset" style="background-color: #1a73e8" onclick="setColor('fgColor', '#1a73e8')"></button>
+                                <button class="btn btn-sm color-preset" style="background-color: #2ecc71" onclick="setColor('fgColor', '#2ecc71')"></button>
+                                <button class="btn btn-sm color-preset" style="background-color: #e74c3c" onclick="setColor('fgColor', '#e74c3c')"></button>
+                                <button class="btn btn-sm color-preset" style="background-color: #9b59b6" onclick="setColor('fgColor', '#9b59b6')"></button>
+                            </div>
+                </div>
+                <div class="mb-3">
+                            <label for="bgColor" class="form-label d-flex justify-content-between align-items-center">
+                                <span><i class="fas fa-fill me-2"></i>Background Color</span>
+                                <input type="color" class="form-control form-control-color" id="bgColor" value="#ffffff" oninput="updateQR()">
+                            </label>
+                            <div class="color-presets d-flex gap-2 mt-2">
+                                <button class="btn btn-sm color-preset" style="background-color: #ffffff; border: 1px solid #dee2e6" onclick="setColor('bgColor', '#ffffff')"></button>
+                                <button class="btn btn-sm color-preset" style="background-color: #f8f9fa" onclick="setColor('bgColor', '#f8f9fa')"></button>
+                                <button class="btn btn-sm color-preset" style="background-color: #e9ecef" onclick="setColor('bgColor', '#e9ecef')"></button>
+                                <button class="btn btn-sm color-preset" style="background-color: #dee2e6" onclick="setColor('bgColor', '#dee2e6')"></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="imageInput" class="form-label"><i class="fas fa-image me-2"></i>Center Image</label>
+                    <input type="file" class="form-control" id="imageInput" accept="image/*" onchange="handleImageUpload(event)">
+                    <div class="form-text">Or enter image URL:</div>
+                    <input type="text" class="form-control mt-2" id="imageUrl" placeholder="Enter image URL" oninput="handleImageUrl()">
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="qr-container">
+                    <div id="canvas"></div>
+                    <div class="download-options">
+                        <button class="btn btn-action btn-download" onclick="downloadPNG()">
+                            <i class="fas fa-download me-2"></i>Download PNG
+                    </button>
+                        <button class="btn btn-action btn-svg" onclick="downloadSVG()">
+                            <i class="fas fa-download me-2"></i>Download SVG
+                    </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <footer>
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <i class="fas fa-code me-2"></i>Developed by LKCreation
+                </div>
+                <div class="footer-contact">
+                    Contact: <a href="tel:+9779815068536">+977 9815068536</a>
+                </div>
+                <div class="footer-contact">
+                    &copy; 2024 All Rights Reserved
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        let qrCode = null;
+        let wakeLock = null;
+        const DEFAULT_SIZE = 300;
+        let currentDotsStyle = 'square';
+        let cornerSquareStyle = 'none';
+        let cornerDotStyle = 'none';
+
+        // Screen wake lock function
+        async function requestWakeLock() {
+            try {
+                wakeLock = await navigator.wakeLock.request('screen');
+                console.log('Wake Lock is active');
+            } catch (err) {
+                console.log(`${err.name}, ${err.message}`);
+            }
+        }
+
+        // Request wake lock when page loads and when visibility changes
+        if ('wakeLock' in navigator) {
+            requestWakeLock();
+            document.addEventListener('visibilitychange', async () => {
+                if (wakeLock !== null && document.visibilityState === 'visible') {
+                    requestWakeLock();
+                }
+            });
+        }
+
+        function initQRCode(imageUrl = null) {
+            const url = document.getElementById('urlInput').value.trim();
+            const size = parseInt(document.getElementById('sizeInput').value);
+            const fgColor = document.getElementById('fgColor').value;
+            const bgColor = document.getElementById('bgColor').value;
+            document.getElementById('sizeOutput').value = size;
+
+            const config = {
+                width: size,
+                height: size,
+                type: "svg",
+                data: url || "https://ambikaadhikari.com.np",
+                margin: 20,
+                qrOptions: {
+                    typeNumber: 0,
+                    mode: 'Byte',
+                    errorCorrectionLevel: 'H'
+                },
+                dotsOptions: {
+                    color: fgColor,
+                    type: currentDotsStyle
+                },
+                backgroundOptions: {
+                    color: bgColor
+                },
+                cornersSquareOptions: {
+                    type: cornerSquareStyle === 'none' ? undefined : cornerSquareStyle,
+                    color: fgColor
+                },
+                cornersDotOptions: {
+                    type: cornerDotStyle === 'none' ? undefined : cornerDotStyle,
+                    color: fgColor
+                }
+            };
+
+            if (imageUrl) {
+                config.image = imageUrl;
+                config.imageOptions = {
+                    crossOrigin: "anonymous",
+                    margin: 10,
+                    imageSize: 0.4
+                };
+            }
+
+            try {
+                if (qrCode) {
+                    qrCode.update(config);
+                } else {
+                    qrCode = new QRCodeStyling(config);
+                    qrCode.append(document.getElementById("canvas"));
+                }
+            } catch (error) {
+                console.error("Error generating QR code:", error);
+                config.dotsOptions.type = 'square';
+                config.cornersSquareOptions.type = undefined;
+                config.cornersDotOptions.type = undefined;
+                if (qrCode) {
+                    qrCode.update(config);
+            } else {
+                    qrCode = new QRCodeStyling(config);
+                    qrCode.append(document.getElementById("canvas"));
+                }
+            }
+        }
+
+        function handleImageUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    initQRCode(e.target.result);
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function handleImageUrl() {
+            const imageUrl = document.getElementById('imageUrl').value.trim();
+            if (imageUrl) {
+                initQRCode(imageUrl);
+            } else {
+                initQRCode();
+            }
+        }
+
+        function setDotsStyle(style) {
+            currentDotsStyle = style;
+            document.getElementById('dotsStyleSelect').value = style;
+            updateQR();
+        }
+
+        function setCornerStyle(type, style) {
+            if (type === 'square') {
+                cornerSquareStyle = style;
+                document.getElementById('cornerSquareSelect').value = style;
+            } else {
+                cornerDotStyle = style;
+                document.getElementById('cornerDotSelect').value = style;
+            }
+            updateQR();
+        }
+
+        function updateQR() {
+            const imageUrl = document.getElementById('imageUrl').value.trim();
+            initQRCode(imageUrl);
+        }
+
+        function resetSize() {
+            document.getElementById('sizeInput').value = DEFAULT_SIZE;
+            document.getElementById('sizeOutput').value = DEFAULT_SIZE;
+            updateQR();
+        }
+
+        function setColor(inputId, color) {
+            document.getElementById(inputId).value = color;
+            updateQR();
+        }
+
+        function generateRandomFileName() {
+            const timestamp = new Date().getTime();
+            const random = Math.random().toString(36).substring(2, 8);
+            return `QR-Code By LureyKashyp (LK creation)-${random}`;
+        }
+
+        async function downloadPNG() {
+            try {
+                const downloadQR = new QRCodeStyling({
+                    width: parseInt(document.getElementById('sizeInput').value),
+                    height: parseInt(document.getElementById('sizeInput').value),
+                    type: "canvas",
+                    data: document.getElementById('urlInput').value.trim() || "https://ambikaadhikari.com.np",
+                    margin: 20,
+                    qrOptions: {
+                        typeNumber: 0,
+                        mode: 'Byte',
+                        errorCorrectionLevel: 'H'
+                    },
+                    dotsOptions: {
+                        color: document.getElementById('fgColor').value,
+                        type: currentDotsStyle
+                    },
+                    backgroundOptions: {
+                        color: document.getElementById('bgColor').value
+                    },
+                    cornersSquareOptions: {
+                        type: cornerSquareStyle === 'none' ? undefined : cornerSquareStyle,
+                        color: document.getElementById('fgColor').value
+                    },
+                    cornersDotOptions: {
+                        type: cornerDotStyle === 'none' ? undefined : cornerDotStyle,
+                        color: document.getElementById('fgColor').value
+                    }
+                });
+
+                // Create temporary container
+                const tempContainer = document.createElement('div');
+                tempContainer.style.display = 'none';
+                document.body.appendChild(tempContainer);
+
+                // Append QR code to temporary container
+                await downloadQR.append(tempContainer);
+
+                // Get canvas element
+                const canvas = tempContainer.querySelector('canvas');
+                if (!canvas) {
+                    throw new Error('Canvas element not found');
+                }
+
+                // Create download link with random file name
+                const link = document.createElement('a');
+                link.download = `${generateRandomFileName()}.png`;
+                
+                // Convert canvas to blob
+                const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+                const url = URL.createObjectURL(blob);
+                
+                link.href = url;
+                link.click();
+                
+                // Cleanup
+                URL.revokeObjectURL(url);
+                document.body.removeChild(tempContainer);
+            } catch (error) {
+                console.error('Error downloading PNG:', error);
+                alert('PNG डाउनलोड गर्दा त्रुटि भयो। कृपया पुन: प्रयास गर्नुहोस्।');
+            }
+        }
+
+        async function downloadSVG() {
+            try {
+                const svgElement = document.querySelector('#canvas svg');
+                if (!svgElement) {
+                    console.error('SVG element not found');
+                    return;
+                }
+
+                // Create a clone of the SVG element and set its dimensions
+                const svgClone = svgElement.cloneNode(true);
+                const size = parseInt(document.getElementById('sizeInput').value);
+                svgClone.setAttribute('width', size);
+                svgClone.setAttribute('height', size);
+                
+                // Create a blob from the SVG
+                const svgData = new XMLSerializer().serializeToString(svgClone);
+                const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+                
+                // Create a temporary link element with random file name
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(svgBlob);
+                link.download = `${generateRandomFileName()}.svg`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                // Clean up
+                URL.revokeObjectURL(link.href);
+            } catch (error) {
+                console.error('Error downloading SVG:', error);
+            }
+        }
+
+        // Initialize QR code when page loads
+        window.onload = function() {
+            document.getElementById('urlInput').value = '';
+            
+            // एन्ड्रोइड डिभाइसको लागि साइज सेट गर्ने
+            if (window.matchMedia("(max-width: 767px) and (-webkit-min-device-pixel-ratio: 2)").matches) {
+                document.getElementById('sizeInput').value = 250;
+                document.getElementById('sizeOutput').value = 250;
+            } else {
+                document.getElementById('sizeInput').value = DEFAULT_SIZE;
+                document.getElementById('sizeOutput').value = DEFAULT_SIZE;
+            }
+            
+            // Set initial styles
+            currentDotsStyle = 'rounded';
+            cornerSquareStyle = 'extra-rounded';
+            cornerDotStyle = 'dot';
+            
+            // Update the select elements
+            document.getElementById('dotsStyleSelect').value = 'rounded';
+            document.getElementById('cornerSquareSelect').value = 'extra-rounded';
+            document.getElementById('cornerDotSelect').value = 'dot';
+            
+            initQRCode();
+        };
+
+        // Remove the old event listener
+        document.getElementById('urlInput').removeEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                updateQR();
+            }
+        });
+
+        // Add new input event listener for real-time updates
+        document.getElementById('urlInput').addEventListener('input', function() {
+            updateQR();
+        });
+
+        // Register Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(registration => {
+                        console.log('ServiceWorker registration successful');
+                    })
+                    .catch(err => {
+                        console.log('ServiceWorker registration failed: ', err);
+                    });
+            });
+        }
+        
+        // Add to Home Screen prompt
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            
+            // Show install button or prompt
+            const installButton = document.createElement('button');
+            installButton.className = 'btn btn-primary install-btn';
+            installButton.innerHTML = '<i class="fas fa-download me-2"></i>Install App';
+            installButton.onclick = () => {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('User accepted the install prompt');
+                    }
+                    deferredPrompt = null;
+                });
+            };
+            
+            // Add install button to footer
+            document.querySelector('.footer-content').prepend(installButton);
+        });
+    </script>
+</body>
+
+</html> 
